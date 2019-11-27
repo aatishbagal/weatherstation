@@ -18,7 +18,8 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 #define LOGO_HEIGHT   16
 #define LOGO_WIDTH    16
-int sensorValue;
+int airSensorValue;
+int rainSensorValue;
 
 void setup() {
   // put your setup code here, to run once:
@@ -39,7 +40,7 @@ void setup() {
   
 }
 
-void testdrawchar(int temp , int airQuality) {
+void testdrawchar(int temp , int airQuality , int rainValue) {
   display.clearDisplay();
       // Normal 1:1 pixel scale
   
@@ -59,7 +60,12 @@ void testdrawchar(int temp , int airQuality) {
   String airQualityDispaly = "AirQuality - " + String(airQuality);
   display.println(airQualityDispaly);        
   display.setCursor(5, i+36);     // Start at top-left corner
-  display.println(F("Raining - No"));        
+  String rainDisplay= "Raining - ? ";
+  if( rainValue > 800 ) 
+    rainDisplay= "Raining - No";
+  else
+    rainDisplay= "Raining - Yes";
+  display.println(rainDisplay);        
 
   display.display();
   delay(1000);
@@ -68,9 +74,11 @@ void testdrawchar(int temp , int airQuality) {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  sensorValue = analogRead(0); 
+  airSensorValue = analogRead(0); 
+  rainSensorValue = analogRead(1);
+  
   Serial.print("AirQua=");
-  Serial.print(sensorValue, DEC);               
-  testdrawchar(10, sensorValue); 
+  Serial.print(airSensorValue, DEC);               
+  testdrawchar(10, airSensorValue,rainSensorValue ); 
   
 }
